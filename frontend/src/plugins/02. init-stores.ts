@@ -25,12 +25,14 @@ export default defineNuxtPlugin(async () => {
     useCookie<OpenverseCookieState["sessionFeatures"]>("sessionFeatures")
   featureFlagStore.initFromCookies(sessionFeatures.value ?? {})
 
-  /* Provider store */
-  const providerStore = useProviderStore()
-  await providerStore.fetchProviders()
-
   /* UI store */
   const uiStore = useUiStore()
   const uiCookies = useCookie<OpenverseCookieState["ui"]>("ui")
   uiStore.initFromCookies(uiCookies.value ?? {})
+
+  if (import.meta.server) {
+    /* Provider store */
+    const providerStore = useProviderStore()
+    await providerStore.fetchProviders()
+  }
 })
